@@ -6,10 +6,11 @@
         <AssemblyTitle>Penumbra.Api</AssemblyTitle>
         <Company></Company>
         <Product>Penumbra</Product>
-        <Copyright>Copyright © 2022</Copyright>
-        <FileVersion>1.0.0.0</FileVersion>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-        <PackageVersion>1.0.15</PackageVersion>
+        <Copyright>Copyright © 2024</Copyright>
+        <FileVersion>5.0.0.0</FileVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+        <PackageVersion>5.1.0</PackageVersion>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <OutputPath>bin\$(Configuration)\</OutputPath>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
@@ -44,7 +45,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <DalamudLibPath>$(AppData)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <DalamudLibPath>$(AppData)\XIVLauncherCN\addon\Hooks\dev\</DalamudLibPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -56,5 +57,13 @@
             <HintPath>$(DalamudLibPath)Lumina.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="Newtonsoft.Json">
+            <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 </Project>
