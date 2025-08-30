@@ -1,4 +1,5 @@
 using Dalamud.Plugin;
+using Newtonsoft.Json.Linq;
 using Penumbra.Api.Api;
 using Penumbra.Api.Enums;
 using Penumbra.Api.Helpers;
@@ -128,6 +129,36 @@ public static class ModMoved
     /// <summary> Create a provider. </summary>
     public static EventProvider<string, string> Provider(IDalamudPluginInterface pi, IPenumbraApiMods api)
         => new(pi, Label, (t => api.ModMoved += t, t => api.ModMoved -= t));
+}
+
+/// <inheritdoc cref="IPenumbraApiMods.CreatingPcp" />
+public static class CreatingPcp
+{
+    /// <summary> The label. </summary>
+    public const string Label = $"Penumbra.{nameof(CreatingPcp)}.V2";
+
+    /// <summary> Create a new event subscriber. </summary>
+    public static EventSubscriber<JObject, ushort, string> Subscriber(IDalamudPluginInterface pi, params Action<JObject, ushort, string>[] actions)
+        => new(pi, Label, actions);
+
+    /// <summary> Create a provider. </summary>
+    public static EventProvider<JObject, ushort, string> Provider(IDalamudPluginInterface pi, IPenumbraApiMods api)
+        => new(pi, Label, (t => api.CreatingPcp += t, t => api.CreatingPcp -= t));
+}
+
+/// <inheritdoc cref="IPenumbraApiMods.ParsingPcp" />
+public static class ParsingPcp
+{
+    /// <summary> The label. </summary>
+    public const string Label = $"Penumbra.{nameof(ParsingPcp)}";
+
+    /// <summary> Create a new event subscriber. </summary>
+    public static EventSubscriber<JObject, string, Guid> Subscriber(IDalamudPluginInterface pi, params Action<JObject, string, Guid>[] actions)
+        => new(pi, Label, actions);
+
+    /// <summary> Create a provider. </summary>
+    public static EventProvider<JObject, string, Guid> Provider(IDalamudPluginInterface pi, IPenumbraApiMods api)
+        => new(pi, Label, (t => api.ParsingPcp += t, t => api.ParsingPcp -= t));
 }
 
 /// <inheritdoc cref="IPenumbraApiMods.GetModPath"/>

@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using Penumbra.Api.Enums;
 
 namespace Penumbra.Api.Api;
@@ -8,7 +9,7 @@ public interface IPenumbraApiMods
     /// <returns>A list of all installed mods. The first string is their directory name, the second string is their mod name.</returns>
     public Dictionary<string, string> GetModList();
 
-    /// <summary> Try to unpack and install a valid mod file (.pmp, .ttmp, .ttmp2) as if installed manually. </summary>
+    /// <summary> Try to unpack and install a valid mod file (.pmp, .pcp, .ttmp, .ttmp2) as if installed manually. </summary>
     /// <param name="modFilePackagePath">The file that should be unpacked.</param>
     /// <returns>Success, MissingFile. Success does not indicate successful installing, just successful queueing for install.</returns>
     public PenumbraApiEc InstallMod(string modFilePackagePath);
@@ -40,6 +41,14 @@ public interface IPenumbraApiMods
     /// <summary> Triggers whenever a mods base name is changed from inside Penumbra. </summary>
     /// <returns>The previous base directory name of the mod and the new base directory name of the mod.</returns>
     public event Action<string, string>? ModMoved;
+
+    /// <summary> Triggers whenever a .pcp file writes its character.json file out. </summary>
+    /// <returns> The JObject written to the file, the index of the game object parsed, and the path to the directory being set up for the mod. </returns>
+    public event Action<JObject, ushort, string>? CreatingPcp;
+
+    /// <summary> Triggers whenever a mod with a character.json file is installed and the file is processed. </summary>
+    /// <returns> The parsed JObject from the file, the identifier of the installed mod and the GUID of the created collection. </returns>
+    public event Action<JObject, string, Guid>? ParsingPcp;
 
     /// <summary>
     /// Get the internal full filesystem path including search order for the specified mod
