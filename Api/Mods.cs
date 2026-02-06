@@ -1,3 +1,4 @@
+using System.Reflection;
 using Newtonsoft.Json.Linq;
 using Penumbra.Api.Enums;
 
@@ -49,6 +50,10 @@ public interface IPenumbraApiMods
     /// <summary> Triggers whenever a mod with a character.json file is installed and the file is processed. </summary>
     /// <returns> The parsed JObject from the file, the identifier of the installed mod and the GUID of the created collection. </returns>
     public event Action<JObject, string, Guid>? ParsingPcp;
+
+    /// <summary> Triggers whenever a user lists unused mods to allow other plugins to mark disabled mods as in use. </summary>
+    /// <returns> Invoked with the mod directory name and mod name, and a dictionary. If your plugin wants to add a note or mark a mod as used, add it to the dictionary with your plugins assembly as key. </returns>
+    public event Action<string, string, Dictionary<Assembly, (bool MarkUsed, string Note)>>? ModUsageQueried;
 
     /// <summary>
     /// Get the internal full filesystem path including search order for the specified mod
