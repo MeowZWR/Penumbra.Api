@@ -1,9 +1,26 @@
 using Dalamud.Plugin;
+using Dalamud.Plugin.Ipc;
+using Luna;
 using Penumbra.Api.Api;
 using Penumbra.Api.Enums;
-using Penumbra.Api.Helpers;
 
 namespace Penumbra.Api.IpcSubscribers;
+
+/// <inheritdoc cref="IPenumbraApiGameState.GetGameStateAdapter"/>
+internal sealed class GetGameStateAdapter(IDalamudPluginInterface pi)
+    : FuncSubscriber<IIdDataShareAdapter>(pi, Label)
+{
+    /// <summary> The label. </summary>
+    public const string Label = $"Penumbra.{nameof(GetGameStateAdapter)}";
+
+    /// <summary> The label as UTF8 string. </summary>
+    public static ReadOnlySpan<byte> LabelU8
+        => "Penumbra.GetGameStateAdapter"u8;
+
+    /// <summary> Create a provider. </summary>
+    public static FuncProvider<IIdDataShareAdapter> Provider(IDalamudPluginInterface pi, IPenumbraApiGameState api)
+        => new(pi, Label, api.GetGameStateAdapter);
+}
 
 /// <inheritdoc cref="IPenumbraApiGameState.GetDrawObjectInfo"/>
 public sealed class GetDrawObjectInfo(IDalamudPluginInterface pi)
@@ -17,7 +34,7 @@ public sealed class GetDrawObjectInfo(IDalamudPluginInterface pi)
         => "Penumbra.GetDrawObjectInfo.V5"u8;
 
     /// <inheritdoc cref="IPenumbraApiGameState.GetDrawObjectInfo"/>
-    public new (nint GameObject, (Guid Id, string Name) AssociatedCollection) Invoke(nint drawObjectAddress)
+    public (nint GameObject, (Guid Id, string Name) AssociatedCollection) Invoke(nint drawObjectAddress)
         => base.Invoke(drawObjectAddress);
 
     /// <summary> Create a provider. </summary>
@@ -37,7 +54,7 @@ public sealed class GetCutsceneParentIndex(IDalamudPluginInterface pi)
         => "Penumbra.GetCutsceneParentIndex"u8;
 
     /// <inheritdoc cref="IPenumbraApiGameState.GetCutsceneParentIndex"/>
-    public new int Invoke(int actorIndex)
+    public int Invoke(int actorIndex)
         => base.Invoke(actorIndex);
 
     /// <summary> Create a provider. </summary>
@@ -57,7 +74,7 @@ public sealed class SetCutsceneParentIndex(IDalamudPluginInterface pi)
         => "Penumbra.SetCutsceneParentIndex.V5"u8;
 
     /// <inheritdoc cref="IPenumbraApiGameState.SetCutsceneParentIndex"/>
-    public new PenumbraApiEc Invoke(int copyIdx, int newParentIdx)
+    public PenumbraApiEc Invoke(int copyIdx, int newParentIdx)
         => (PenumbraApiEc)base.Invoke(copyIdx, newParentIdx);
 
     /// <summary> Create a provider. </summary>

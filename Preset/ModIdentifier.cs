@@ -5,6 +5,28 @@ using System.Text.Json;
 
 namespace Penumbra.Api.Preset;
 
+/// <summary> A comparer for mod identifiers. </summary>
+public sealed class ModIdentifierComparer : IComparer<ModIdentifier>
+{
+    /// <summary> The instance for the comparer. </summary>
+    public static readonly ModIdentifierComparer Instance = new();
+
+    /// <inheritdoc />
+    public int Compare(ModIdentifier lhs, ModIdentifier rhs)
+    {
+        var leftName       = lhs.Name.Length is 0 ? lhs.Identifier : lhs.Name;
+        var rightName      = rhs.Name.Length is 0 ? rhs.Identifier : rhs.Name;
+        var nameComparison = string.Compare(leftName, rightName, StringComparison.CurrentCulture);
+        if (nameComparison is not 0)
+            return nameComparison;
+
+        return string.Compare(lhs.Identifier, rhs.Identifier, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private ModIdentifierComparer()
+    { }
+}
+
 /// <summary> Methods to use on a mod identifier. </summary>
 public static class ModIdentifierExtensions
 {
@@ -14,6 +36,18 @@ public static class ModIdentifierExtensions
     /// <summary> Readonly Methods to use on the mod identifier. </summary>
     extension(in ModIdentifier id)
     {
+        /// <summary> Compare two mod identifiers. </summary>
+        /// <param name="other"> The other identifier. </param>
+        /// <returns> Lexicographical comparison of the names if they differ, otherwise lexicographical comparison of the identifiers if they differ. </returns>
+        public int CompareTo(ModIdentifier other)
+        {
+            var nameComparison = string.Compare(id.Name, other.Name, StringComparison.Ordinal);
+            if (nameComparison is not 0)
+                return nameComparison;
+
+            return string.Compare(id.Identifier, other.Identifier, StringComparison.OrdinalIgnoreCase);
+        }
+
         /// <summary> Get whether the identifier is empty. </summary>
         public bool IsEmpty
             => id.Identifier.Length is 0 && id.Name.Length is 0;

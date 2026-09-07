@@ -3,15 +3,24 @@ global using SettingPresetData = (System.Collections.Generic.Dictionary<(System.
     _priority, short Version, bool _hasPriority, byte _state);
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using Luna;
 
 namespace Penumbra.Api.Preset;
 
 /// <summary> Methods to use on the data for a setting preset. </summary>
 public static class SettingPresetExtensions
 {
+    /// <summary> An empty preset. </summary>
+    public static readonly SettingPresetData EmptyData = Create();
+
     /// <summary> Readonly methods to use on the data for a setting preset. </summary>
-    extension(ref readonly SettingPresetData data)
+    extension(in SettingPresetData data)
     {
+        /// <summary> An empty preset. </summary>
+        public static SettingPresetData Empty
+            => EmptyData.Clone();
+
         /// <summary> Whether a preset is valid. </summary>
         public bool Valid
             => data.Settings is not null;
@@ -54,11 +63,12 @@ public static class SettingPresetExtensions
             if (data._state is not (byte)ModState.Ignored)
                 writer.WriteString("State"u8, data._state switch
                 {
-                    (byte)ModState.Disabled  => "Disabled"u8,
-                    (byte)ModState.Enabled   => "Enabled"u8,
-                    (byte)ModState.Inherited => "Inherited"u8,
-                    (byte)ModState.Toggle    => "Toggle"u8,
-                    _                        => "Ignored"u8,
+                    (byte)ModState.Disabled        => "Disabled"u8,
+                    (byte)ModState.Enabled         => "Enabled"u8,
+                    (byte)ModState.Inherited       => "Inherited"u8,
+                    (byte)ModState.Toggle          => "Toggle"u8,
+                    (byte)ModState.RemoveTemporary => "RemoveTemporary"u8,
+                    _                              => "Ignored"u8,
                 });
             if (data._hasPriority)
                 writer.WriteNumber("Priority"u8, data._priority);
@@ -240,11 +250,12 @@ public static class SettingPresetExtensions
 
                 data._state = j.GetString() switch
                 {
-                    "Enabled" or "enabled"     => (byte)ModState.Enabled,
-                    "Disabled" or "disabled"   => (byte)ModState.Disabled,
-                    "Inherited" or "inherited" => (byte)ModState.Inherited,
-                    "Toggle" or "toggle"       => (byte)ModState.Toggle,
-                    _                          => (byte)ModState.Ignored,
+                    "Enabled" or "enabled"                 => (byte)ModState.Enabled,
+                    "Disabled" or "disabled"               => (byte)ModState.Disabled,
+                    "Inherited" or "inherited"             => (byte)ModState.Inherited,
+                    "Toggle" or "toggle"                   => (byte)ModState.Toggle,
+                    "RemoveTemporary" or "removetemporary" => (byte)ModState.RemoveTemporary,
+                    _                                      => (byte)ModState.Ignored,
                 };
                 return true;
             }
@@ -278,6 +289,51 @@ public static class SettingPresetExtensions
             }
 
             return false;
+        }
+
+        /// <summary> Parse a preset from the given JSON element. </summary>
+        public static SettingPresetData FromElement(in JsonElement element)
+            => element.Deserialize<SettingPresetData>(Options);
+    }
+
+    private static readonly JsonSerializerOptions Options = CreateOptions(JsonFunctions.SerializerOptions);
+
+    private static JsonSerializerOptions CreateOptions(JsonSerializerOptions original)
+    {
+        var ret = new JsonSerializerOptions(original);
+        ret.Converters.Add(new Converter());
+        return ret;
+    }
+
+    /// <inheritdoc/>
+    private sealed class Converter : JsonConverter<SettingPresetData>
+    {
+        /// <inheritdoc/>
+        public override SettingPresetData Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType is JsonTokenType.Null)
+                return SettingPresetData.Empty;
+
+            if (reader.TokenType is not JsonTokenType.StartObject)
+                throw new JsonException($"Invalid token type to convert {nameof(SettingPresetData)}.");
+
+            var ret   = SettingPresetData.Create();
+            var limit = reader.CreateObjectLimit();
+            while (limit.Read(ref reader))
+            {
+                if (!ret.ParseJsonProperties(ref reader))
+                    reader.Skip();
+            }
+
+            return ret;
+        }
+
+        /// <inheritdoc/>
+        public override void Write(Utf8JsonWriter writer, SettingPresetData value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+            value.WriteJsonProperties(writer);
+            writer.WriteEndObject();
         }
     }
 }

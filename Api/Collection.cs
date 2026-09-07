@@ -1,3 +1,5 @@
+using Dalamud.Plugin.Ipc;
+using Luna;
 using Penumbra.Api.Enums;
 
 namespace Penumbra.Api.Api;
@@ -7,6 +9,10 @@ public interface IPenumbraApiCollection
 {
     /// <returns> A list of the GUIDs of all currently installed collections together with their display names, excluding the empty collection. </returns>
     public Dictionary<Guid, string> GetCollections();
+
+    /// <summary> Get a data share adapter for collection handling. </summary>
+    /// <param name="owner"> The requesting plugin for the adapter. </param>
+    public IIdDataShareAdapter GetCollectionManagerAdapter(CallerPlugin owner);
 
     /// <summary> Returns all collections for which either
     /// <list type="number">
@@ -62,5 +68,5 @@ public interface IPenumbraApiCollection
 
     /// <summary> Obtain a function object that can check if the current collection contains a given changed item by listing the mods changing it. </summary>
     /// <remarks> Throws an <seealso cref="ObjectDisposedException"/> on invocation if the collection storage is not valid anymore, so clear this on <seealso cref="IpcSubscribers.Disposed"/>. </remarks>
-    public Func<string, (string ModDirectory, string ModName)[]> CheckCurrentChangedItemFunc();
+    public Func<string, ModIdentifier[]> CheckCurrentChangedItemFunc();
 }

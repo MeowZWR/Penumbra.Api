@@ -1,3 +1,5 @@
+using Dalamud.Plugin.Ipc;
+using Luna;
 using Penumbra.Api.Enums;
 
 namespace Penumbra.Api.Api;
@@ -9,6 +11,10 @@ public interface IPenumbraApiGameState
     /// <returns>The game object associated with the given <paramref name="drawObject">draw object</paramref>
     /// and the GUID and name of the collection associated with this game object.</returns>
     public (nint GameObject, (Guid Id, string Name) Collection) GetDrawObjectInfo(nint drawObject);
+
+    /// <summary> Get a data share adapter for game state handling. </summary>
+    /// <param name="owner"> The requesting plugin for the adapter. </param>
+    public IIdDataShareAdapter GetGameStateAdapter(CallerPlugin owner);
 
     /// <summary>
     /// Obtain the parent game object index for an unnamed cutscene actor by its <paramref name="actorIdx">index</paramref>.

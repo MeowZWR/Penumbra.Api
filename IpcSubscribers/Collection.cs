@@ -1,7 +1,9 @@
 using Dalamud.Plugin;
+using Dalamud.Plugin.Ipc;
+using Luna;
 using Penumbra.Api.Api;
 using Penumbra.Api.Enums;
-using Penumbra.Api.Helpers;
+using Penumbra.Api.Wrappers;
 
 namespace Penumbra.Api.IpcSubscribers;
 
@@ -25,6 +27,26 @@ public sealed class GetCollections(IDalamudPluginInterface pi)
         => new(pi, Label, api.GetCollections);
 }
 
+/// <inheritdoc cref="IPenumbraApiCollection.GetCollectionManagerAdapter"/>
+public sealed class GetCollectionManagerAdapter(IDalamudPluginInterface pi)
+    : FuncSubscriber<IIdDataShareAdapter>(pi, Label)
+{
+    /// <summary> The label. </summary>
+    public const string Label = $"Penumbra.{nameof(GetCollectionManagerAdapter)}";
+
+    /// <summary> The label as UTF8 string. </summary>
+    public static ReadOnlySpan<byte> LabelU8
+        => "Penumbra.GetCollectionManagerAdapter"u8;
+
+    /// <inheritdoc cref="IPenumbraApiCollection.GetCollectionManagerAdapter"/>
+    public new IIdDataShareAdapter Invoke()
+        => base.Invoke();
+
+    /// <summary> Create a provider. </summary>
+    public static FuncProvider<IIdDataShareAdapter> Provider(IDalamudPluginInterface pi, IPenumbraApiCollection api)
+        => new(pi, Label, api.GetCollectionManagerAdapter);
+}
+
 /// <inheritdoc cref="IPenumbraApiCollection.GetCollectionsByIdentifier"/>
 public sealed class GetCollectionsByIdentifier(IDalamudPluginInterface pi)
     : FuncSubscriber<string, List<(Guid Id, string Name)>>(pi, Label)
@@ -37,7 +59,7 @@ public sealed class GetCollectionsByIdentifier(IDalamudPluginInterface pi)
         => "Penumbra.GetCollectionsByIdentifier"u8;
 
     /// <inheritdoc cref="IPenumbraApiCollection.GetCollectionsByIdentifier"/>
-    public new List<(Guid Id, string Name)> Invoke(string name)
+    public List<(Guid Id, string Name)> Invoke(string name)
         => base.Invoke(name);
 
     /// <summary> Create a provider. </summary>
@@ -57,7 +79,7 @@ public sealed class GetChangedItemsForCollection(IDalamudPluginInterface pi)
         => "Penumbra.GetChangedItemsForCollection"u8;
 
     /// <inheritdoc cref="IPenumbraApiCollection.GetChangedItemsForCollection"/>
-    public new Dictionary<string, object?> Invoke(Guid collectionId)
+    public Dictionary<string, object?> Invoke(Guid collectionId)
         => base.Invoke(collectionId);
 
     /// <summary> Create a provider. </summary>
@@ -97,7 +119,7 @@ public sealed class GetCollectionForObject(IDalamudPluginInterface pi)
         => "Penumbra.GetCollectionForObject.V5"u8;
 
     /// <inheritdoc cref="IPenumbraApiCollection.GetCollectionForObject"/>
-    public new (bool ObjectValid, bool IndividualSet, (Guid Id, string Name) EffectiveCollection) Invoke(int gameObjectIdx)
+    public (bool ObjectValid, bool IndividualSet, (Guid Id, string Name) EffectiveCollection) Invoke(int gameObjectIdx)
         => base.Invoke(gameObjectIdx);
 
     /// <summary> Create a provider. </summary>
@@ -147,7 +169,7 @@ public sealed class SetCollectionForObject(IDalamudPluginInterface pi)
         => "Penumbra.SetCollectionForObject.V5"u8;
 
     /// <inheritdoc cref="IPenumbraApiCollection.SetCollectionForObject"/>
-    public new (PenumbraApiEc, (Guid Id, string Name)? OldCollection) Invoke(int gameObjectIdx, Guid? collectionId, bool allowCreateNew = true,
+    public (PenumbraApiEc, (Guid Id, string Name)? OldCollection) Invoke(int gameObjectIdx, Guid? collectionId, bool allowCreateNew = true,
         bool allowDelete = true)
     {
         var (ec, pair) = base.Invoke(gameObjectIdx, collectionId, allowCreateNew, allowDelete);
@@ -166,7 +188,7 @@ public sealed class SetCollectionForObject(IDalamudPluginInterface pi)
 
 /// <inheritdoc cref="IPenumbraApiCollection.CheckCurrentChangedItemFunc"/>
 public sealed class CheckCurrentChangedItemFunc(IDalamudPluginInterface pi)
-    : FuncSubscriber<Func<string, (string ModDirectory, string ModName)[]>>(pi, Label)
+    : FuncSubscriber<Func<string, ModIdentifier[]>>(pi, Label)
 {
     /// <summary> The label. </summary>
     public const string Label = $"Penumbra.{nameof(CheckCurrentChangedItemFunc)}";
@@ -176,11 +198,10 @@ public sealed class CheckCurrentChangedItemFunc(IDalamudPluginInterface pi)
         => "Penumbra.CheckCurrentChangedItemFunc"u8;
 
     /// <inheritdoc cref="IPenumbraApiCollection.CheckCurrentChangedItemFunc"/>
-    public new Func<string, (string ModDirectory, string ModName)[]> Invoke()
+    public new Func<string, ModIdentifier[]> Invoke()
         => base.Invoke();
 
     /// <summary> Create a provider. </summary>
-    public static FuncProvider<Func<string, (string ModDirectory, string ModName)[]>>
-        Provider(IDalamudPluginInterface pi, IPenumbraApiCollection api)
+    public static FuncProvider<Func<string, ModIdentifier[]>> Provider(IDalamudPluginInterface pi, IPenumbraApiCollection api)
         => new(pi, Label, api.CheckCurrentChangedItemFunc);
 }
