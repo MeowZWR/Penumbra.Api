@@ -138,8 +138,8 @@ public sealed class CollectionWrapper : BasicWrapper<CollectionWrapper, Collecti
         /// <inheritdoc cref="BasicWrapper{TSelf,TEnum}.Disposed"/>
         DisposedEvent = BasicWrapper.DisposedEventMethod,
 
-        /// <inheritdoc cref="BasicWrapper{TSelf,TEnum}.Alive"/>
-        Alive = BasicWrapper.AliveMethod,
+        /// <inheritdoc cref="BasicWrapper{TSelf,TEnum}.IsDisposed"/>
+        IsDisposed = BasicWrapper.IsDisposedMethod,
 
         /// <inheritdoc cref="BasicWrapper{TSelf,TEnum}.Version"/>
         Version = BasicWrapper.VersionMethod,
