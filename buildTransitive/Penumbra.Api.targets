@@ -1,0 +1,20 @@
+<Project>
+    <PropertyGroup>
+        <_PenumbraApiLunaFallback>$(MSBuildThisFileDirectory)..\fallback\$(TargetFramework)\Luna.dll</_PenumbraApiLunaFallback>
+    </PropertyGroup>
+
+    <Target Name="_PenumbraApiResolveLunaFallback" AfterTargets="ResolveReferences" Condition="Exists('$(_PenumbraApiLunaFallback)')">
+        <ItemGroup>
+            <_PenumbraApiResolvedLuna Include="@(ReferencePath)" Condition="'%(ReferencePath.FusionName)' != '' And $([System.String]::Copy('%(ReferencePath.FusionName)').StartsWith('Luna, '))" />
+        </ItemGroup>
+
+        <ItemGroup Condition="'@(_PenumbraApiResolvedLuna)' == ''">
+            <ReferenceCopyLocalPaths Include="$(_PenumbraApiLunaFallback)">
+                <ReferenceSourceTarget>PenumbraApiFallback</ReferenceSourceTarget>
+            </ReferenceCopyLocalPaths>
+            <ReferencePath Include="$(_PenumbraApiLunaFallback)">
+                <ReferenceSourceTarget>PenumbraApiFallback</ReferenceSourceTarget>
+            </ReferencePath>
+        </ItemGroup>
+    </Target>
+</Project>
