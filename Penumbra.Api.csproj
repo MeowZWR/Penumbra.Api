@@ -3,9 +3,9 @@
         <AssemblyTitle>Penumbra.Api</AssemblyTitle>
         <Product>Penumbra</Product>
         <Copyright>Copyright © 2025</Copyright>
-        <FileVersion>5.19.1.0</FileVersion>
-        <AssemblyVersion>5.19.1.0</AssemblyVersion>
-        <PackageVersion>5.19.1</PackageVersion>
+        <FileVersion>5.19.2.0</FileVersion>
+        <AssemblyVersion>5.19.2.0</AssemblyVersion>
+        <PackageVersion>5.19.2</PackageVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <OutputPath>bin\$(Configuration)\</OutputPath>
         <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
@@ -27,6 +27,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0" />
+        <PackageReference Include="System.IO.Hashing" Version="9.0.8" />
         <ProjectReference Include="..\Luna\Luna.Generators\Luna.Generators.csproj" OutputItemType="Analyzer"
                           ReferenceOutputAssembly="false" PrivateAssets="all" />
         <ProjectReference Include="..\Luna\Luna\Luna.csproj" PrivateAssets="all" />
