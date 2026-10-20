@@ -113,6 +113,27 @@ public sealed class AddTemporaryMod(IDalamudPluginInterface pi)
         => new(pi, callers, Label, (a, b, c, d, e) => (int)api.AddTemporaryMod(a, b, c, d, e));
 }
 
+/// <inheritdoc cref="IPenumbraApiTemporary.SetTemporarySphereMaps"/>
+public sealed class SetTemporarySphereMaps(IDalamudPluginInterface pi)
+    : FuncSubscriber<string, Guid, Dictionary<int, Dictionary<int, string>>, int, int>(pi, Label)
+{
+    /// <summary> The label. </summary>
+    public const string Label = $"Penumbra.{nameof(SetTemporarySphereMaps)}.V5";
+
+    /// <summary> The label as UTF8 string. </summary>
+    public static ReadOnlySpan<byte> LabelU8
+        => "Penumbra.SetTemporarySphereMaps.V5"u8;
+
+    /// <inheritdoc cref="IPenumbraApiTemporary.SetTemporarySphereMaps"/>
+    public new PenumbraApiEc Invoke(string tag, Guid collectionId, Dictionary<int, Dictionary<int, string>> materials, int priority)
+        => (PenumbraApiEc)base.Invoke(tag, collectionId, materials, priority);
+
+    /// <summary> Create a provider. </summary>
+    public static FuncProvider<string, Guid, Dictionary<int, Dictionary<int, string>>, int, int> Provider(
+        IDalamudPluginInterface pi, IPenumbraApiTemporary api)
+        => new(pi, Label, (a, b, c, d) => (int)api.SetTemporarySphereMaps(a, b, c, d));
+}
+
 /// <inheritdoc cref="IPenumbraApiTemporary.RemoveTemporaryModAll"/>
 public sealed class RemoveTemporaryModAll(IDalamudPluginInterface pi)
     : FuncSubscriber<string, int, int>(pi, Label)

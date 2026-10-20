@@ -104,6 +104,15 @@ public interface IPenumbraApiTemporary
     public PenumbraApiEc AddTemporaryMod(string tag, Guid collectionId, Dictionary<string, string> paths, string manipString,
         int priority);
 
+    /// <summary> Replace the temporary sphere-map bindings registered under a tag for a specific collection. </summary>
+    /// <param name="tag"> Custom name for the temporary sphere-map set. </param>
+    /// <param name="collectionId"> GUID of the collection the sphere maps should apply to. </param>
+    /// <param name="materials"> Original material-path CRC32 to sphere slot and local file path mappings. An empty map removes the registration. </param>
+    /// <param name="priority"> Desired priority when multiple temporary registrations target the same material. </param>
+    /// <returns> CollectionMissing, InvalidArgument or Success. </returns>
+    public PenumbraApiEc SetTemporarySphereMaps(string tag, Guid collectionId,
+        Dictionary<int, Dictionary<int, string>> materials, int priority);
+
     /// <summary>
     /// Remove the temporary mod with the given tag and priority from the temporary mods applying to all collections, if it exists.
     /// </summary>

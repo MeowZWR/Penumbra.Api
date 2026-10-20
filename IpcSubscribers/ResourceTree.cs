@@ -28,6 +28,27 @@ public sealed class GetGameObjectResourcePaths(IDalamudPluginInterface pi)
         => new(pi, Label, api.GetGameObjectResourcePaths);
 }
 
+/// <inheritdoc cref="IPenumbraApiResourceTree.GetGameObjectSphereMapPaths"/>
+public sealed class GetGameObjectSphereMapPaths(IDalamudPluginInterface pi)
+    : FuncSubscriber<ushort[], Dictionary<int, Dictionary<int, string>>?[]>(pi, Label)
+{
+    /// <summary> The label. </summary>
+    public const string Label = $"Penumbra.{nameof(GetGameObjectSphereMapPaths)}.V5";
+
+    /// <summary> The label as UTF8 string. </summary>
+    public static ReadOnlySpan<byte> LabelU8
+        => "Penumbra.GetGameObjectSphereMapPaths.V5"u8;
+
+    /// <inheritdoc cref="IPenumbraApiResourceTree.GetGameObjectSphereMapPaths"/>
+    public new Dictionary<int, Dictionary<int, string>>?[] Invoke(params ushort[] gameObjectIndices)
+        => base.Invoke(gameObjectIndices);
+
+    /// <summary> Create a provider. </summary>
+    public static FuncProvider<ushort[], Dictionary<int, Dictionary<int, string>>?[]> Provider(IDalamudPluginInterface pi,
+        IPenumbraApiResourceTree api)
+        => new(pi, Label, api.GetGameObjectSphereMapPaths);
+}
+
 /// <inheritdoc cref="IPenumbraApiResourceTree.GetPlayerResourcePaths"/>
 public sealed class GetPlayerResourcePaths(IDalamudPluginInterface pi)
     : FuncSubscriber<Dictionary<ushort, Dictionary<string, HashSet<string>>>>(pi, Label)
