@@ -15,6 +15,13 @@ public interface IPenumbraApiResourceTree
     public Dictionary<string, HashSet<string>>?[] GetGameObjectResourcePaths(params ushort[] gameObjects);
 
     /// <summary>
+    /// Get custom mod-level sphere-map files used by the given game objects, keyed by original material-path CRC32 and sphere slot.
+    /// </summary>
+    /// <param name="gameObjects"> The game object indices for which to get sphere-map dependencies. </param>
+    /// <returns> An array of material CRC32 to slot/file dictionaries, in the same order as the requested game objects. </returns>
+    public Dictionary<int, Dictionary<int, string>>?[] GetGameObjectSphereMapPaths(params ushort[] gameObjects);
+
+    /// <summary>
     /// Get the player and player-owned game objects' resources, as dictionaries of actual paths (that may be FS paths for redirected resources, or game paths for swapped or vanilla resources) to game paths.
     /// </summary>
     /// <returns> A dictionary of game object indices to resource path dictionaries. </returns>
